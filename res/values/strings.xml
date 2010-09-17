@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_buy_ticket">Buy MHD ticket for Bratislava now.</string>
+    <string name="app_name">SMSTicket</string>
+	<string name="text_button_buy_ticket">Buy!</string>
+	<string name="intent_sms_sent">sk.michalko.smsticket.SMS_SENT</string>
+	<string name="intent_sms_delivered">sk.michalko.smsticket.SMS_DELIVERED</string>
+</resources>
