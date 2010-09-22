@@ -16,6 +16,7 @@ import android.widget.Toast;
 public class SMSTicket extends Activity {
 
 	static final String TAG = SMSTicket.class.getSimpleName();
+	static boolean isWaitingResponse = false;
 
     /** Called when the activity is first created. */
     @Override
@@ -28,11 +29,14 @@ public class SMSTicket extends Activity {
         btnBuyTicket.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v) 
-            {                
-                    sendSMS();                
-                    Toast.makeText(getBaseContext(), 
-                        "Empty SMS Sent to number 1100", 
-                        Toast.LENGTH_SHORT).show();
+            {   
+            	// See if we have received all ordered tickets
+            	TicketDao ticket = TicketDao.getCurrent(v.getContext());
+            	
+            	//if (ticket == null || ticket.getState() == TicketState.TICKET_EXPIRED.toString()){
+            		sendSMS();                
+            		Toast.makeText(getBaseContext(), "Empty SMS Sent to number 1100", Toast.LENGTH_SHORT).show();
+            	//} 
             }
         });
     }

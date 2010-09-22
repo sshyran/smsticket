@@ -77,26 +77,32 @@ public class TicketDao {
 		
 		Log.d(TAG,"Records read : " + result.getCount());
 		
-		result.moveToFirst();
-		int index = result.getColumnIndex("uuid");
-		String temp = result.getString(index);
-		ticket.setUuid(temp);
-		index = result.getColumnIndex("created");
-		ticket.setCreated(string2date(result.getString(index)));
-		index = result.getColumnIndex("changed");
-		ticket.setChanged(string2date(result.getString(index)));
-		index = result.getColumnIndex("state");
-		ticket.setState(result.getString(index));
-		index = result.getColumnIndex("validFrom");
-		ticket.setValidFrom(string2date(result.getString(index)));
-		ticket.setValidThrough(string2date(result.getString(result.getColumnIndex("validThrough"))));
-		ticket.setTicketId(result.getString(result.getColumnIndex("ticketId")));
-		ticket.setSmsBody(result.getString(result.getColumnIndex("smsBody")));
+		ticket = rs2dao(ticket,result);
 		
 		return ticket;
 		
 	}
 	
+	public static TicketDao getCurrent(Context context){
+		
+		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(context);
+		
+		SQLiteDatabase db = sqlHelper.getWritableDatabase();
+			
+		Cursor result = db.query("tickets", null, null, null , null, null, "created DESC", "1");
+		
+		if (result.getCount() == 0) return null;
+		if (result.getCount() >1 ) throw new RuntimeException("Limit 1 query returns more than 1 result ? Head explodes.");
+		
+		TicketDao ticket = new TicketDao(); 
+		
+		Log.d(TAG,"Records read : " + result.getCount());
+		
+		ticket = rs2dao(ticket,result);
+		
+		return ticket;
+		
+	}
 	
 	public String getUuid() {
 		return uuid;
@@ -146,7 +152,29 @@ public class TicketDao {
 	public void setSmsBody(String smsBody) {
 		this.smsBody = smsBody;
 	}
-
+	
+	private static TicketDao rs2dao(TicketDao dao, Cursor result){
+		
+		result.moveToFirst();
+		int index = result.getColumnIndex("uuid");
+		String temp = result.getString(index);
+		dao.setUuid(temp);
+		index = result.getColumnIndex("created");
+		dao.setCreated(string2date(result.getString(index)));
+		index = result.getColumnIndex("changed");
+		dao.setChanged(string2date(result.getString(index)));
+		index = result.getColumnIndex("state");
+		dao.setState(result.getString(index));
+		index = result.getColumnIndex("validFrom");
+		dao.setValidFrom(string2date(result.getString(index)));
+		dao.setValidThrough(string2date(result.getString(result.getColumnIndex("validThrough"))));
+		dao.setTicketId(result.getString(result.getColumnIndex("ticketId")));
+		dao.setSmsBody(result.getString(result.getColumnIndex("smsBody")));
+		
+		return dao;
+		
+	}
+	
 	private static String date2string(Date date){
 		
 		if (date == null) return null;

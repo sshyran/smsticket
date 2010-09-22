@@ -37,7 +37,6 @@ public class SMSReceiver extends BroadcastReceiver {
 		String INTENT_SENT = ctx.getResources().getString(R.string.intent_sms_sent);
 		String INTENT_DELIVERED = ctx.getResources().getString(R.string.intent_sms_delivered);
 		
-		
 		// what are we notified about ?
 		String action = intent.getAction();
 		String ticketId = intent.getDataString();
@@ -58,7 +57,7 @@ public class SMSReceiver extends BroadcastReceiver {
 			
 		} else if ("android.provider.Telephony.SMS_RECEIVED".equalsIgnoreCase(action)){
 			
-			changeState(TicketState.TICKET_ORDER_CONFIRMED,TicketState.TICKET_VALID, ticket);
+			//changeState(TicketState.TICKET_ORDER_CONFIRMED,TicketState.TICKET_VALID, ticket);
 			
 			// read received messages from intent object
 			Bundle bundle = intent.getExtras();
@@ -85,9 +84,9 @@ public class SMSReceiver extends BroadcastReceiver {
 
 	public void changeState(TicketState currentState, TicketState nextState, TicketDao ticket){
 				
-		if (TicketState.valueOf(ticket.getState()) == currentState) {
+		//if (TicketState.valueOf(ticket.getState()) == currentState) {
 			ticket.setState(nextState.toString());
-		} else Log.e(TAG,"Ticket in unexpected state " + ticket.getState() + ", expected " + currentState);
+		//} else Log.e(TAG,"Ticket in unexpected state " + ticket.getState() + ", expected " + currentState);
 	}
 
 }
