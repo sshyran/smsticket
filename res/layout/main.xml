@@ -9,9 +9,15 @@
     android:layout_height="wrap_content" 
     android:text="@string/text_buy_ticket"
     />
+<ListView android:id="@+id/ticket_list" 
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" 
+	android:entries="@+id/ticket_list_item">
+</ListView>
 <Button 
-	android:layout_width="wrap_content" 
+	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
 	android:id="@+id/ButtonBuyTicket" 
 	android:text="@string/text_button_buy_ticket"></Button>
+
 </LinearLayout>

@@ -63,7 +63,7 @@ public class SMSTicket extends Activity {
        	PendingIntent intentSMSDelivered = PendingIntent.getBroadcast(context, 0, intentDelivered, 0);
             	
     	SmsManager smsManager = SmsManager.getDefault();
-    	smsManager.sendTextMessage("5556", null, "SMSTicket", intentSMSSent, intentSMSDelivered);
+    	smsManager.sendTextMessage("00421905547580", null, "SMSTicket", intentSMSSent, intentSMSDelivered);
     	
     	Log.d(TAG, "SMS Ticket message sent. " + ticket.getUuid());
   	

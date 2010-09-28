@@ -1,5 +1,7 @@
 package sk.michalko.smsticket.handlers;
 
+import java.util.Date;
+
 import sk.michalko.smsticket.R;
 import sk.michalko.smsticket.TicketDao;
 import sk.michalko.smsticket.TicketState;
@@ -57,25 +59,35 @@ public class SMSReceiver extends BroadcastReceiver {
 			
 		} else if ("android.provider.Telephony.SMS_RECEIVED".equalsIgnoreCase(action)){
 			
-			//changeState(TicketState.TICKET_ORDER_CONFIRMED,TicketState.TICKET_VALID, ticket);
-			
 			// read received messages from intent object
 			Bundle bundle = intent.getExtras();
 			SmsMessage [] messages = null;
 			String text = "";
 			if (bundle!=null) {		
-
 				Object[] pdus = (Object[]) bundle.get("pdus");
-				messages = new SmsMessage[pdus.length];            
+				messages = new SmsMessage[pdus.length];
+				int j = 0;
+
 				for (int i=0; i<messages.length; i++){
-					messages[i] = SmsMessage.createFromPdu((byte[])pdus[i]);                
-					text += "SMS from " + messages[i].getOriginatingAddress();                     
-					text += " :";
-					text += messages[i].getMessageBody().toString();
-					text += "\n";        
+					messages[j] = SmsMessage.createFromPdu((byte[])pdus[i]);
+					text = messages[j].getMessageBody();
+					// Detect SMS Ticket message
+					if ("DPB".regionMatches(0, text, 0, 3)){
+						j++;
+					}
+				}				
+				
+				// Lets assume we have only one ticket here
+				if (j==1){
+				    ticket.setState(TicketState.TICKET_VALID.toString());
+				    ticket.setChanged(new Date());
+				    ticket.setSmsBody(messages[0].getMessageBody());
+					Toast.makeText(context, "SMS Ticket arrived.", Toast.LENGTH_LONG).show();
+					changeState(TicketState.TICKET_ORDER_CONFIRMED,TicketState.TICKET_VALID, ticket);
 				}
-				Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 			}
+			
+			
 		}
 
 	}
