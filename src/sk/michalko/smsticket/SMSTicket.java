@@ -1,29 +1,45 @@
 package sk.michalko.smsticket;
 
 import sk.michalko.smsticket.handlers.SMSReceiver;
-import android.app.Activity;
+import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-public class SMSTicket extends Activity {
+public class SMSTicket extends ListActivity {
 
 	static final String TAG = SMSTicket.class.getSimpleName();
 	static boolean isWaitingResponse = false;
+	static String[] PROJECTION = new String[] { "state", "validThrough" }; 
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        //setContentView(R.layout.main);
         
+        // Perform a managed query. The Activity will handle closing and requerying the cursor
+        // when needed.
+		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(this);
+		
+		SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        
+        Cursor cursor = db.query("tickets", PROJECTION, null, null, null, null, "created ASC", "6");
+        
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.item, cursor,
+                PROJECTION , new int[] { R.id.item_image, R.id.item_text });
+        setListAdapter(adapter);
+ 
         Button btnBuyTicket = (Button) findViewById(R.id.ButtonBuyTicket);
         
         btnBuyTicket.setOnClickListener(new View.OnClickListener() 

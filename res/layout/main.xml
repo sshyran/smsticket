@@ -11,9 +11,7 @@
     />
 <ListView android:id="@+id/ticket_list" 
 	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent" 
-	android:entries="@+id/ticket_list_item">
-</ListView>
+	android:layout_height="fill_parent"/>
 <Button 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 

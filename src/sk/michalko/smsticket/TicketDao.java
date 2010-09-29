@@ -15,6 +15,7 @@ public class TicketDao {
 	
 	static final String TAG = TicketDao.class.getSimpleName();
 
+	String _id;
 	String uuid;
 	Date created;
 	Date changed;
@@ -62,13 +63,37 @@ public class TicketDao {
 		db.insert("tickets", "", values);
 	}
 	
+	public void update(Context context){
+		
+		if (getState()==null || _id == "") return;
+		
+		setChanged(new Date());
+		
+		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(context);
+		
+		SQLiteDatabase db = sqlHelper.getWritableDatabase();
+		
+		ContentValues values = new ContentValues();
+		
+		values.put("uuid", uuid);
+		values.put("created", date2string(created) );
+		values.put("changed", date2string(changed));
+		values.put("state", state);
+		values.put("validFrom", date2string(validFrom));
+		values.put("validThrough", date2string(validThrough));
+		values.put("ticketId", ticketId);
+		values.put("smsBody", smsBody);
+		
+		db.update("tickets", values, "_id=?" , new String[] {_id});
+	}
+	
 	public static TicketDao getById(String byId, Context context){
 		
 		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(context);
 		
 		SQLiteDatabase db = sqlHelper.getWritableDatabase();
 			
-		Cursor result = db.query("tickets", null, "uuid='" + byId + "'", null , null, null, null);
+		Cursor result = db.query("tickets", null, "uuid=?'", new String [] {byId} , null, null, null);
 		
 		if (result.getCount() == 0) return null;
 		if (result.getCount() >1 ) throw new RuntimeException("The database has been corrupted, please reinstall application.");
