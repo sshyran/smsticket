@@ -26,7 +26,7 @@ public class SMSTicket extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.main);
+        setContentView(R.layout.main);
         
         // Perform a managed query. The Activity will handle closing and requerying the cursor
         // when needed.

@@ -11,7 +11,7 @@ public class TicketOpenSqlHelper extends SQLiteOpenHelper {
 	private static final String SMSTICKET_TABLE_NAME = "tickets";
 	private static final String SMSTICKET_TABLE_CREATE = "CREATE TABLE "
 			+ SMSTICKET_TABLE_NAME
-			+ " ('_id' integer autoincrement, 'uuid' constraint unique,'created', 'changed', 'state','validFrom','validThrough','ticketId','smsBody',primary key('_id'), unique ('uuid'));";
+			+ " ('_id' integer primary key, 'uuid' unique ,'created', 'changed', 'state','validFrom','validThrough','ticketId','smsBody');";
 
 	static TicketOpenSqlHelper instance = null;
 
