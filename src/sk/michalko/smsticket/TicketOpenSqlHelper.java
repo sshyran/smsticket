@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class TicketOpenSqlHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "sk.michalko.smsticket.db";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	private static final String SMSTICKET_TABLE_NAME = "tickets";
 	private static final String SMSTICKET_TABLE_CREATE = "CREATE TABLE "
 			+ SMSTICKET_TABLE_NAME

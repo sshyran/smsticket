@@ -5,6 +5,7 @@ import java.util.Date;
 import sk.michalko.smsticket.R;
 import sk.michalko.smsticket.TicketDao;
 import sk.michalko.smsticket.TicketState;
+import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,13 +29,15 @@ public class SMSReceiver extends BroadcastReceiver {
 
 	static final String TAG = SMSReceiver.class.getSimpleName();
 	
-	Context ctx = null;
+	ListActivity ctx = null;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		
-
-		ctx = context;
+		ctx = (ListActivity)context;
+		
+		// Should we redraw list?
+		boolean isStateChanged = false;
 		
 		String INTENT_SENT = ctx.getResources().getString(R.string.intent_sms_sent);
 		String INTENT_DELIVERED = ctx.getResources().getString(R.string.intent_sms_delivered);
@@ -47,14 +50,16 @@ public class SMSReceiver extends BroadcastReceiver {
 		
 		Toast.makeText(context, action , Toast.LENGTH_LONG).show();
 		
-		TicketDao ticket = TicketDao.getById(ticketId, ctx);
+		TicketDao ticket = null;
 		
 		if (INTENT_SENT.equalsIgnoreCase(action)) {
 			
+			ticket = TicketDao.getById(ticketId, ctx);
 			changeState(TicketState.TICKET_ORDER_CREATED, TicketState.TICKET_ORDER_IN_PROGRESS, ticket);
 			
 		} else if (INTENT_DELIVERED.equalsIgnoreCase(action)) {
 			
+			ticket = TicketDao.getById(ticketId, ctx);
 			changeState(TicketState.TICKET_ORDER_IN_PROGRESS,TicketState.TICKET_ORDER_CONFIRMED, ticket);
 			
 		} else if ("android.provider.Telephony.SMS_RECEIVED".equalsIgnoreCase(action)){
@@ -74,26 +79,24 @@ public class SMSReceiver extends BroadcastReceiver {
 					// Detect SMS Ticket message
 					if ("DPB".regionMatches(0, text, 0, 3)){
 						j++;
+						Log.d(TAG,"Found Ticket SMS: \n" + text);
 					}
 				}				
 				
 				// Lets assume we have only one ticket here
 				if (j==1){
+					// Get last created ticket, but not validated
+					ticket = TicketDao.getCurrent(ctx);
 				    ticket.setState(TicketState.TICKET_VALID.toString());
 				    ticket.setChanged(new Date());
 				    ticket.setSmsBody(messages[0].getMessageBody());
 					Toast.makeText(context, "SMS Ticket arrived.", Toast.LENGTH_LONG).show();
 					changeState(TicketState.TICKET_ORDER_CONFIRMED,TicketState.TICKET_VALID, ticket);
 				}
-			}
-			
-			
+			}			
 		}
-
 	}
 	
-	
-
 	public void changeState(TicketState currentState, TicketState nextState, TicketDao ticket){
 				
 		//if (TicketState.valueOf(ticket.getState()) == currentState) {

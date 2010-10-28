@@ -34,11 +34,15 @@ public class SMSTicket extends ListActivity {
 		
 		SQLiteDatabase db = sqlHelper.getWritableDatabase();
         
-        Cursor cursor = db.query("tickets", PROJECTION, null, null, null, null, "created ASC", "6");
+        Cursor cursor = db.query("tickets", new String[] {"_id","state","validThrough"}, null, null, null, null, "created ASC", "6");
+        
+        //cursor.moveToFirst();
         
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.item, cursor,
-                PROJECTION , new int[] { R.id.item_image, R.id.item_text });
+                											  PROJECTION , new int[] { R.id.item_image, R.id.item_text });
+        adapter.setViewBinder(new IconViewBinder());
         setListAdapter(adapter);
+        
  
         Button btnBuyTicket = (Button) findViewById(R.id.ButtonBuyTicket);
         
@@ -79,7 +83,7 @@ public class SMSTicket extends ListActivity {
        	PendingIntent intentSMSDelivered = PendingIntent.getBroadcast(context, 0, intentDelivered, 0);
             	
     	SmsManager smsManager = SmsManager.getDefault();
-    	smsManager.sendTextMessage("00421905547580", null, "SMSTicket", intentSMSSent, intentSMSDelivered);
+    	smsManager.sendTextMessage("5556", null, "SMSTicket", intentSMSSent, intentSMSDelivered);
     	
     	Log.d(TAG, "SMS Ticket message sent. " + ticket.getUuid());
   	
