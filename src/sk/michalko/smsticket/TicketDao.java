@@ -129,6 +129,14 @@ public class TicketDao {
 		
 	}
 	
+	public String get_id() {
+		return _id;
+	}
+
+	private void set_id(String id) {
+		_id = id;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -181,7 +189,9 @@ public class TicketDao {
 	private static TicketDao rs2dao(TicketDao dao, Cursor result){
 		
 		result.moveToFirst();
-		int index = result.getColumnIndex("uuid");
+		int index = result.getColumnIndex("_id");
+		dao.set_id(result.getString(index));
+		index = result.getColumnIndex("uuid");
 		String temp = result.getString(index);
 		dao.setUuid(temp);
 		index = result.getColumnIndex("created");

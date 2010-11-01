@@ -13,6 +13,7 @@
         <receiver android:name="sk.michalko.smsticket.handlers.SMSReceiver"> 
             <intent-filter> 
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED_ACTION" />
                 <action android:name="sk.michalko.smsticket.SMS_SENT"/> 
                 <action android:name="sk.michalko.smsticket.SMS_DELIVERED"/> 
             </intent-filter> 

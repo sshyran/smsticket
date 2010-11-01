@@ -5,4 +5,6 @@
 	<string name="text_button_buy_ticket">Buy!</string>
 	<string name="intent_sms_sent">sk.michalko.smsticket.SMS_SENT</string>
 	<string name="intent_sms_delivered">sk.michalko.smsticket.SMS_DELIVERED</string>
+	<string name="intent_sms_received">android.provider.Telephony.SMS_RECEIVED</string>
+	<string name="intent_update">sk.michalko.smsticket.update</string>	
 </resources>
