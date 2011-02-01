@@ -77,9 +77,10 @@ public class SMSReceiver extends BroadcastReceiver {
 					messages[j] = SmsMessage.createFromPdu((byte[]) pdus[i]);
 					text = messages[j].getMessageBody();
 					// Detect SMS Ticket message
-					if ("DPB".regionMatches(0, text, 0, 3)) {
+					//if ("DPB".regionMatches(0, text, 0, 3)) {
+					if (text != null && text.contains("Prestupny CL")) {
 						j++;
-						Log.d(TAG, "Found Ticket SMS: \n" + text);
+						Log.d(TAG, "Found Ticket SMS: \n" + text + "\nClass:\n" + messages[j].getMessageClass() + "\nSubject: " +messages[j].getPseudoSubject());
 					}
 				}
 
