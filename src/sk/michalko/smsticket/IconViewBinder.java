@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 
 /**
@@ -59,8 +60,43 @@ public class IconViewBinder implements ViewBinder {
 					break;
 				}
 			} catch (Exception ex) {
-				Log.e(TAG, "Ticket state not recognized: " + stateString + " , binding stock icon.");
-				iconState.setImageResource(R.drawable.stub);
+				Log.e(TAG, "Ticket state " + stateString + " exception: " + ex);
+				//iconState.setImageResource(R.drawable.stub);
+			}
+			return true;
+		}
+		if (viewId == R.id.item_text) {
+
+			TextView textState = (TextView) view;
+
+			String stateString = cursor.getString(columnIndex);
+
+			try {
+				TicketState state = TicketState.valueOf(stateString);
+
+				switch (state) {
+				case TICKET_ORDER_CREATED:
+					textState.setText("Ticket was created on:");
+					break;
+				case TICKET_ORDER_IN_PROGRESS:
+					textState.setText("Ticket ordered.");
+					break;
+				case TICKET_ORDER_CONFIRMED:
+					textState.setText("Ticket order confirmed.");
+					break;
+				case TICKET_VALID:
+					textState.setText("This ticket is valid until:");
+					break;
+				case TICKET_EXPIRED:
+					textState.setText("Ticket expired on:");
+					break;
+				default:
+					textState.setText("Ticket in unknown state.");
+					break;
+				}
+			} catch (Exception ex) {
+				Log.e(TAG, "Ticket naming exception: " + ex );
+				//textState.setText("Ticket does not want to show text.");
 			}
 			return true;
 		}
