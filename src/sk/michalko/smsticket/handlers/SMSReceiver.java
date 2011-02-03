@@ -80,7 +80,7 @@ public class SMSReceiver extends BroadcastReceiver {
 					//if ("DPB".regionMatches(0, text, 0, 3)) {
 					if (text != null && text.contains("Prestupny CL")) {
 						j++;
-						Log.d(TAG, "Found Ticket SMS: \n" + text + "\nClass:\n" + messages[j].getMessageClass() + "\nSubject: " +messages[j].getPseudoSubject());
+						//Log.d(TAG, "Found Ticket SMS: \n" + text + "\nClass:\n" + messages[j].getMessageClass() + "\nSubject: " +messages[j].getPseudoSubject());
 					}
 				}
 
@@ -93,6 +93,15 @@ public class SMSReceiver extends BroadcastReceiver {
 					ticket.setSmsBody(messages[0].getMessageBody());
 					Toast.makeText(context, "SMS Ticket arrived.", Toast.LENGTH_LONG).show();
 					changeState(TicketState.TICKET_ORDER_CONFIRMED, TicketState.TICKET_VALID, ticket);
+					StringBuffer message = new StringBuffer();
+					message.append("Found Ticket SMS: \n");
+					message.append(messages[0].getMessageBody());
+					message.append("\nClass:\n");
+					message.append(messages[0].getMessageClass());
+					message.append("\nSubject: ");
+					message.append(messages[0].getPseudoSubject());
+					
+					new LogAsyncTask().execute(message.toString());
 					ticket.update(ctx);
 				}
 			}
