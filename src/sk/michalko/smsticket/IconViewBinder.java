@@ -69,26 +69,31 @@ public class IconViewBinder implements ViewBinder {
 
 			TextView textState = (TextView) view;
 
-			String stateString = cursor.getString(columnIndex);
-
+			String stateString = cursor.getString(1);
+			
 			try {
 				TicketState state = TicketState.valueOf(stateString);
-
+				String text;
+				
 				switch (state) {
 				case TICKET_ORDER_CREATED:
-					textState.setText("Ticket was created on:");
+					textState.setText("Ticket created.");
 					break;
 				case TICKET_ORDER_IN_PROGRESS:
 					textState.setText("Ticket ordered.");
 					break;
 				case TICKET_ORDER_CONFIRMED:
-					textState.setText("Ticket order confirmed.");
+					textState.setText("Order confirmed.");
 					break;
 				case TICKET_VALID:
-					textState.setText("This ticket is valid until:");
+					text = "Valid until: ";
+					text = text + cursor.getString(2);
+					textState.setText(text);
 					break;
 				case TICKET_EXPIRED:
-					textState.setText("Ticket expired on:");
+					text = "Expired on: ";
+					text = text + cursor.getString(2);
+					textState.setText(text);
 					break;
 				default:
 					textState.setText("Ticket in unknown state.");
