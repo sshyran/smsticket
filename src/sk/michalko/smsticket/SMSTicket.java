@@ -47,7 +47,8 @@ public class SMSTicket extends ListActivity {
 		// sanitize db
 		// Check and remove unfinished (state < TICKET_VALID and created < now()- 10 min)
 		// optionaly check received sms messages in case notification failed
-		db.execSQL("DELETE from tickets WHERE (state != 'TICKET_VALID' AND state != 'TICKET_EXPIRED') AND (created < datetime('now','localtime', '-10 minutes'))");
+		//db.execSQL("DELETE from tickets WHERE (state != 'TICKET_VALID' AND state != 'TICKET_EXPIRED') AND (created < datetime('now','localtime', '-10 minutes'))");
+		db.execSQL("DELETE from tickets WHERE (validThrough is null) AND (created < datetime('now','localtime', '-10 minutes'))");
 		// Check and update expired (state < TICKET_EXPIRED and validThrough < now())
 		db.execSQL("UPDATE tickets SET state = 'TICKET_EXPIRED' WHERE (state = 'TICKET_VALID' AND validThrough < datetime('now'))");
 		
@@ -113,8 +114,8 @@ public class SMSTicket extends ListActivity {
 		PendingIntent intentSMSDelivered = PendingIntent.getBroadcast(context, 0, intentDelivered, 0);
 
 		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage("5556", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
-		//smsManager.sendTextMessage("1100", null, "", intentSMSSent, intentSMSDelivered);
+		//smsManager.sendTextMessage("5556", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
+		smsManager.sendTextMessage("1100", null, "", intentSMSSent, intentSMSDelivered);
 		//smsManager.sendTextMessage("00421905547580", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
 
 		Log.d(TAG, "SMS Ticket message sent. " + ticket.getUuid());

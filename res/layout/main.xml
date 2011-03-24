@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" android:orientation="vertical">
+    android:layout_height="fill_parent" 
+    android:orientation="vertical">
 <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
     android:text="@string/text_buy_ticket"/>
 <ListView android:id="@android:id/android:list" 
-	android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-<Button 
 	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"/>
+<Button 
 	android:layout_height="wrap_content" 
 	android:id="@+id/ButtonBuyTicket" 
-	android:text="@string/text_button_buy_ticket" android:layout_gravity="bottom"/>
+	android:text="@string/text_button_buy_ticket" 
+	android:layout_gravity="bottom" 
+	android:layout_width="fill_parent"/>
 
 </LinearLayout>
