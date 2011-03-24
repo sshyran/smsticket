@@ -15,6 +15,8 @@ public class TicketDao {
 	
 	static final String TAG = TicketDao.class.getSimpleName();
 
+	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+
 	String _id;
 	String uuid;
 	Date created;
@@ -104,6 +106,8 @@ public class TicketDao {
 		
 		ticket = rs2dao(ticket,result);
 		
+		result.close();
+		
 		return ticket;
 		
 	}
@@ -124,11 +128,36 @@ public class TicketDao {
 		Log.d(TAG,"Records read : " + result.getCount());
 		
 		ticket = rs2dao(ticket,result);
+
+		result.close();
 		
 		return ticket;
 		
 	}
-	
+
+	public static TicketDao getValid(Context context){
+		
+		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(context);
+		
+		SQLiteDatabase db = sqlHelper.getWritableDatabase();
+			
+		Cursor result = db.query("tickets", null, null, null , null, null, "created DESC", "1");
+		
+		if (result.getCount() == 0) return null;
+		if (result.getCount() >1 ) throw new RuntimeException("Limit 1 query returns more than 1 result ? Head explodes.");
+		
+		TicketDao ticket = new TicketDao(); 
+		
+		Log.d(TAG,"Records read : " + result.getCount());
+		
+		ticket = rs2dao(ticket,result);
+
+		result.close();
+		
+		return ticket;
+		
+	}
+
 	public String get_id() {
 		return _id;
 	}
@@ -214,7 +243,6 @@ public class TicketDao {
 		
 		if (date == null) return null;
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); 
 		return dateFormat.format(date);
 		
 	}
@@ -222,9 +250,7 @@ public class TicketDao {
 	private static Date string2date(String date){
 		
 		if (date == null) return null;
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); 
-		
+				
 		Date temp ;
 		try {
 			temp = dateFormat.parse(date, new ParsePosition(0));

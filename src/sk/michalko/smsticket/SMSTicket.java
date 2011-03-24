@@ -25,7 +25,8 @@ public class SMSTicket extends ListActivity {
 	static boolean isWaitingResponse = false;
 	static String[] PROJECTION = new String[] { "state", "validThrough" };
 	
-	Cursor cursor = null;
+	Cursor cursorView = null;
+	Cursor cursorExpire = null;
 	SimpleCursorAdapter adapter = null;
 
 	/** Called when the activity is first created. */
@@ -37,12 +38,21 @@ public class SMSTicket extends ListActivity {
 		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(this);
 		SQLiteDatabase db = sqlHelper.getWritableDatabase();
 
-		cursor = db.query("tickets", new String[] { "_id", "state",	"validThrough" }, null, null, null, null, "created ASC", "6");
+		cursorView = db.query("tickets", new String[] { "_id", "changed", "state",	"validThrough" }, null, null, null, null, "created ASC", "6");
 
-		adapter = new SimpleCursorAdapter(this,	R.layout.item, cursor, PROJECTION, new int[] { R.id.item_image,	R.id.item_text });
+		adapter = new SimpleCursorAdapter(this,	R.layout.item, cursorView, PROJECTION, new int[] { R.id.item_image,	R.id.item_text });
 		adapter.setViewBinder(new IconViewBinder());
 		setListAdapter(adapter);
 
+		// sanitize db
+		// Check and remove unfinished (state < TICKET_VALID and created < now()- 10 min)
+		// optionaly check received sms messages in case notification failed
+		db.execSQL("DELETE from tickets WHERE (state != 'TICKET_VALID' AND state != 'TICKET_EXPIRED') AND (created < datetime('now','localtime', '-10 minutes'))");
+		// Check and update expired (state < TICKET_EXPIRED and validThrough < now())
+		db.execSQL("UPDATE tickets SET state = 'TICKET_EXPIRED' WHERE (state = 'TICKET_VALID' AND validThrough < datetime('now'))");
+		
+		
+		
 		// Register refresh gui event receiver
 		registerReceiver(refresh, new IntentFilter(getResources().getString(R.string.intent_update)));
 
@@ -55,14 +65,14 @@ public class SMSTicket extends ListActivity {
 	protected void onDestroy() {
 		unregisterReceiver(refresh);
 		setListAdapter(null);
-		cursor.close();
+		cursorView.close();
 		super.onDestroy();
 	}
 
 
 	public BroadcastReceiver refresh = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
-			cursor.requery();
+			cursorView.requery();
 			adapter.notifyDataSetChanged();
 			Log.d(TAG, "Notification: Tickets changed.");
 		}

@@ -53,7 +53,7 @@ public class IconViewBinder implements ViewBinder {
 					iconState.setImageResource(R.drawable.ticket_valid);
 					break;
 				case TICKET_EXPIRED:
-					iconState.setImageResource(R.drawable.ticket_valid);
+					iconState.setImageResource(R.drawable.ticket_expired);
 					break;
 				default:
 					iconState.setImageResource(R.drawable.stub);
@@ -69,7 +69,7 @@ public class IconViewBinder implements ViewBinder {
 
 			TextView textState = (TextView) view;
 
-			String stateString = cursor.getString(1);
+			String stateString = cursor.getString(2);
 			
 			try {
 				TicketState state = TicketState.valueOf(stateString);
@@ -77,22 +77,28 @@ public class IconViewBinder implements ViewBinder {
 				
 				switch (state) {
 				case TICKET_ORDER_CREATED:
-					textState.setText("Ticket created.");
+					text = "Created on: ";
+					text = text + cursor.getString(1);
+					textState.setText(text);
 					break;
 				case TICKET_ORDER_IN_PROGRESS:
-					textState.setText("Ticket ordered.");
+					text = "Sms sent on: ";
+					text = text + cursor.getString(1);
+					textState.setText(text);
 					break;
 				case TICKET_ORDER_CONFIRMED:
-					textState.setText("Order confirmed.");
+					text = "Order confirmed on: ";
+					text = text + cursor.getString(1);
+					textState.setText(text);
 					break;
 				case TICKET_VALID:
 					text = "Valid until: ";
-					text = text + cursor.getString(2);
+					text = text + cursor.getString(3);
 					textState.setText(text);
 					break;
 				case TICKET_EXPIRED:
 					text = "Expired on: ";
-					text = text + cursor.getString(2);
+					text = text + cursor.getString(3);
 					textState.setText(text);
 					break;
 				default:
