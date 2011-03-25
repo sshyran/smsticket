@@ -1,10 +1,13 @@
 package sk.michalko.smsticket;
 
 import sk.michalko.smsticket.handlers.SMSReceiver;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -15,10 +18,12 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 public class SMSTicket extends ListActivity {
+
 
 	static final String TAG = SMSTicket.class.getSimpleName();
 	
@@ -29,6 +34,8 @@ public class SMSTicket extends ListActivity {
 	Cursor cursorExpire = null;
 	SimpleCursorAdapter adapter = null;
 	SQLiteDatabase db;
+	
+	String ticketDetails = "Details";
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -44,7 +51,7 @@ public class SMSTicket extends ListActivity {
 		adapter = new SimpleCursorAdapter(this,	R.layout.item, cursorView, PROJECTION, new int[] { R.id.item_image,	R.id.item_text });
 		adapter.setViewBinder(new IconViewBinder());
 		setListAdapter(adapter);
-
+		
 		sanitizeDb();
 		
 		// Register refresh gui event receiver
@@ -63,6 +70,34 @@ public class SMSTicket extends ListActivity {
 		super.onDestroy();
 	}
 
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// get ticket details according to id
+		ticketDetails = "";
+		TicketDao ticket = TicketDao.getById(String.valueOf(id), this.getBaseContext());
+		ticketDetails = ticket.getSmsBody();
+		showDialog(1);
+		super.onListItemClick(l, v, position, id);
+	}
+
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+        return new AlertDialog.Builder(SMSTicket.this)
+            .setTitle(R.string.dialog_ticket_details)
+            .setPositiveButton(R.string.dialog_ticket_details_ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            })
+            .create();
+	}
+
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		((AlertDialog)dialog).setMessage(ticketDetails);
+		super.onPrepareDialog(id, dialog);
+	}
 
 	public BroadcastReceiver refresh = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
