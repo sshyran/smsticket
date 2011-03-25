@@ -28,7 +28,8 @@ public class SMSTicket extends ListActivity {
 	Cursor cursorView = null;
 	Cursor cursorExpire = null;
 	SimpleCursorAdapter adapter = null;
-
+	SQLiteDatabase db;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class SMSTicket extends ListActivity {
 		setContentView(R.layout.main);
 
 		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(this);
-		SQLiteDatabase db = sqlHelper.getWritableDatabase();
+		db = sqlHelper.getWritableDatabase();
 
 		cursorView = db.query("tickets", new String[] { "_id", "changed", "state",	"validThrough" }, null, null, null, null, "created ASC", "6");
 
@@ -44,15 +45,7 @@ public class SMSTicket extends ListActivity {
 		adapter.setViewBinder(new IconViewBinder());
 		setListAdapter(adapter);
 
-		// sanitize db
-		// Check and remove unfinished (state < TICKET_VALID and created < now()- 10 min)
-		// optionaly check received sms messages in case notification failed
-		//db.execSQL("DELETE from tickets WHERE (state != 'TICKET_VALID' AND state != 'TICKET_EXPIRED') AND (created < datetime('now','localtime', '-10 minutes'))");
-		db.execSQL("DELETE from tickets WHERE (validThrough is null) AND (created < datetime('now','localtime', '-10 minutes'))");
-		// Check and update expired (state < TICKET_EXPIRED and validThrough < now())
-		db.execSQL("UPDATE tickets SET state = 'TICKET_EXPIRED' WHERE (state = 'TICKET_VALID' AND validThrough < datetime('now'))");
-		
-		
+		sanitizeDb();
 		
 		// Register refresh gui event receiver
 		registerReceiver(refresh, new IntentFilter(getResources().getString(R.string.intent_update)));
@@ -73,6 +66,7 @@ public class SMSTicket extends ListActivity {
 
 	public BroadcastReceiver refresh = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
+			sanitizeDb();
 			cursorView.requery();
 			adapter.notifyDataSetChanged();
 			Log.d(TAG, "Notification: Tickets changed.");
@@ -114,11 +108,22 @@ public class SMSTicket extends ListActivity {
 		PendingIntent intentSMSDelivered = PendingIntent.getBroadcast(context, 0, intentDelivered, 0);
 
 		SmsManager smsManager = SmsManager.getDefault();
-		//smsManager.sendTextMessage("5556", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
+		//smsManager.sendTextMessage("5554", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
 		smsManager.sendTextMessage("1100", null, "", intentSMSSent, intentSMSDelivered);
 		//smsManager.sendTextMessage("00421905547580", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
 
 		Log.d(TAG, "SMS Ticket message sent. " + ticket.getUuid());
+
+	}
+	
+	public void sanitizeDb() {
+		// sanitize db
+		// Check and remove unfinished (state < TICKET_VALID and created < now()- 10 min)
+		// optionaly check received sms messages in case notification failed
+		//db.execSQL("DELETE from tickets WHERE (state != 'TICKET_VALID' AND state != 'TICKET_EXPIRED') AND (created < datetime('now','localtime', '-10 minutes'))");
+		db.execSQL("DELETE from tickets WHERE (validThrough is null) AND (created < datetime('now','localtime', '-10 minutes'))");
+		// Check and update expired (state < TICKET_EXPIRED and validThrough < now())
+		db.execSQL("UPDATE tickets SET state = 'TICKET_EXPIRED' WHERE (state = 'TICKET_VALID' AND validThrough < datetime('now'))");
 
 	}
 }
