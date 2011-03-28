@@ -95,8 +95,8 @@ public class SMSTicket extends ListActivity {
 
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
-		((AlertDialog)dialog).setMessage(ticketDetails);
 		super.onPrepareDialog(id, dialog);
+		((AlertDialog)dialog).setMessage(ticketDetails);
 	}
 
 	public BroadcastReceiver refresh = new BroadcastReceiver() {
@@ -143,8 +143,8 @@ public class SMSTicket extends ListActivity {
 		PendingIntent intentSMSDelivered = PendingIntent.getBroadcast(context, 0, intentDelivered, 0);
 
 		SmsManager smsManager = SmsManager.getDefault();
-		//smsManager.sendTextMessage("5554", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
-		smsManager.sendTextMessage("1100", null, "", intentSMSSent, intentSMSDelivered);
+		smsManager.sendTextMessage("5554", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
+		//smsManager.sendTextMessage("1100", null, "", intentSMSSent, intentSMSDelivered);
 		//smsManager.sendTextMessage("00421905547580", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
 
 		Log.d(TAG, "SMS Ticket message sent. " + ticket.getUuid());

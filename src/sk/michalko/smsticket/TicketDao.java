@@ -95,7 +95,7 @@ public class TicketDao {
 		
 		SQLiteDatabase db = sqlHelper.getWritableDatabase();
 			
-		Cursor result = db.query("tickets", null, "uuid=?", new String [] {byId} , null, null, null);
+		Cursor result = db.query("tickets", null, "_id=?", new String [] {byId} , null, null, null);
 		
 		if (result.getCount() == 0) return null;
 		if (result.getCount() >1 ) throw new RuntimeException("The database has been corrupted, please reinstall application.");
@@ -112,6 +112,28 @@ public class TicketDao {
 		
 	}
 	
+	public static TicketDao getByUUID(String byId, Context context){
+		
+		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(context);
+		
+		SQLiteDatabase db = sqlHelper.getWritableDatabase();
+			
+		Cursor result = db.query("tickets", null, "uuid=?", new String [] {byId} , null, null, null);
+		
+		if (result.getCount() == 0) return null;
+		if (result.getCount() >1 ) throw new RuntimeException("The database has been corrupted, please reinstall application.");
+		
+		TicketDao ticket = new TicketDao(); 
+		
+		Log.d(TAG,"Records read : " + result.getCount());
+		
+		ticket = rs2dao(ticket,result);
+		
+		result.close();
+		
+		return ticket;
+		
+	}
 	public static TicketDao getCurrent(Context context){
 		
 		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(context);
