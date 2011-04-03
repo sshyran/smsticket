@@ -58,13 +58,13 @@ public class SMSReceiver extends BroadcastReceiver {
 
 		if (INTENT_SMS_SENT.equalsIgnoreCase(action)) {
 
-			ticket = TicketDao.getById(ticketId, ctx);
+			ticket = TicketDao.getByUUID(ticketId, ctx);
 			changeState(TicketState.TICKET_ORDER_CREATED, TicketState.TICKET_ORDER_IN_PROGRESS, ticket);
 			ticket.update(ctx);
 
 		} else if (INTENT_SMS_DELIVERED.equalsIgnoreCase(action)) {
 
-			ticket = TicketDao.getById(ticketId, ctx);
+			ticket = TicketDao.getByUUID(ticketId, ctx);
 			changeState(TicketState.TICKET_ORDER_IN_PROGRESS, TicketState.TICKET_ORDER_CONFIRMED, ticket);
 			ticket.update(ctx);
 

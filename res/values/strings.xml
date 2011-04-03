@@ -7,6 +7,7 @@
 	<string name="intent_sms_delivered">sk.michalko.smsticket.SMS_DELIVERED</string>
 	<string name="intent_sms_received">android.provider.Telephony.SMS_RECEIVED</string>
 	<string name="intent_update">sk.michalko.smsticket.update</string>
-	<string name="dialog_ticket_details">Ticket details information</string>
+	<string name="dialog_ticket_details_title">Ticket details information</string>
 	<string name="dialog_ticket_details_ok">Ok!</string>	
+	<string name="dialog_ticket_details_message">Default message</string>	
 </resources>
