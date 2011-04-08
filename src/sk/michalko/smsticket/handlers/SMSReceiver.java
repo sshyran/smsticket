@@ -2,10 +2,8 @@ package sk.michalko.smsticket.handlers;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 import sk.michalko.smsticket.R;
-import sk.michalko.smsticket.SMSTicket;
 import sk.michalko.smsticket.TicketDao;
 import sk.michalko.smsticket.TicketState;
 import android.content.BroadcastReceiver;
@@ -42,17 +40,13 @@ public class SMSReceiver extends BroadcastReceiver {
 		final String INTENT_SMS_RECEIVED = ctx.getResources().getString(R.string.intent_sms_received);
 
 
-		
-		// Should we redraw list?
-		boolean isStateChanged = false;
-
 		// what are we notified about ?
 		String action = intent.getAction();
 		String ticketId = intent.getDataString();
 
 		Log.d(TAG, "Received notification " + action + ", " + ticketId);
 
-		Toast.makeText(context, action, Toast.LENGTH_LONG).show();
+//		Toast.makeText(context, action, Toast.LENGTH_LONG).show();
 
 		TicketDao ticket = null;
 
@@ -61,12 +55,14 @@ public class SMSReceiver extends BroadcastReceiver {
 			ticket = TicketDao.getByUUID(ticketId, ctx);
 			changeState(TicketState.TICKET_ORDER_CREATED, TicketState.TICKET_ORDER_IN_PROGRESS, ticket);
 			ticket.update(ctx);
+			Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_sent_toast), Toast.LENGTH_LONG).show();
 
 		} else if (INTENT_SMS_DELIVERED.equalsIgnoreCase(action)) {
 
 			ticket = TicketDao.getByUUID(ticketId, ctx);
 			changeState(TicketState.TICKET_ORDER_IN_PROGRESS, TicketState.TICKET_ORDER_CONFIRMED, ticket);
 			ticket.update(ctx);
+			Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_delivered_toast), Toast.LENGTH_LONG).show();
 
 		} else if (INTENT_SMS_RECEIVED.equalsIgnoreCase(action)) {
 
@@ -98,15 +94,15 @@ public class SMSReceiver extends BroadcastReceiver {
 					ticket.setChanged(new Date());
 					ticket.setSmsBody(messages[0].getMessageBody());
 					try{
-						String dateFrom = messages[0].getMessageBody().substring(69, 85);
-						String dateThrough = dateFrom.substring(0,11) + messages[0].getMessageBody().substring(89, 94);
+						String dateFrom = messages[0].getMessageBody().substring(68, 84);
+						String dateThrough = dateFrom.substring(0,11) + messages[0].getMessageBody().substring(88, 93);
 						ticket.setValidFrom(dateFormat.parse(dateFrom));
 						ticket.setValidThrough(dateFormat.parse(dateThrough));
 					} catch (Exception e) 
 					{
 						Log.e(TAG, "Message cannot be parsed for ticket." + e);
 					}
-					Toast.makeText(context, "SMS Ticket arrived.", Toast.LENGTH_LONG).show();
+					Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_received_toast), Toast.LENGTH_LONG).show();
 					changeState(TicketState.TICKET_ORDER_CONFIRMED, TicketState.TICKET_VALID, ticket);
 					StringBuffer message = new StringBuffer();
 					message.append("Found Ticket SMS: \n");

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:orientation="vertical">
-<TextView  
+<TextView android:id="@+id/list_title" 
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="@string/text_buy_ticket"/>
+    android:text="@string/text_buy_ticket" android:textStyle="bold"/>
 <ListView android:id="@android:id/android:list" 
-	android:layout_width="fill_parent" 
-	android:layout_height="wrap_content"/>
+	android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@+id/list_title"/>
+<!-- ListView android:id="@+id/ticket_list" 
+	android:layout_width="fill_parent" android:layout_height="wrap_content"/-->
 <Button 
-	android:layout_height="wrap_content" 
-	android:id="@+id/ButtonBuyTicket" 
+	android:id="@+id/button_buy" 
 	android:text="@string/text_button_buy_ticket" 
 	android:layout_gravity="bottom" 
-	android:layout_width="fill_parent"/>
+	android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>

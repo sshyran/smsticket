@@ -46,7 +46,7 @@ public class SMSTicket extends ListActivity {
 		TicketOpenSqlHelper sqlHelper = TicketOpenSqlHelper.getInstance(this);
 		db = sqlHelper.getWritableDatabase();
 
-		cursorView = db.query("tickets", new String[] { "_id", "changed", "state",	"validThrough" }, null, null, null, null, "created ASC", "6");
+		cursorView = db.query("tickets", new String[] { "_id", "changed", "state",	"validThrough" }, null, null, null, null, "created DESC", null);
 
 		adapter = new SimpleCursorAdapter(this,	R.layout.item, cursorView, PROJECTION, new int[] { R.id.item_image,	R.id.item_text });
 		adapter.setViewBinder(new IconViewBinder());
@@ -57,9 +57,18 @@ public class SMSTicket extends ListActivity {
 		// Register refresh gui event receiver
 		registerReceiver(refresh, new IntentFilter(getResources().getString(R.string.intent_update)));
 
-		Button btnBuyTicket = (Button) findViewById(R.id.ButtonBuyTicket);
+		Button btnBuyTicket = (Button) findViewById(R.id.button_buy);
 		btnBuyTicket.setOnClickListener(buttonListener);
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		sanitizeDb();
+		super.onResume();
 	}
 
 	@Override
@@ -99,7 +108,6 @@ public class SMSTicket extends ListActivity {
 		super.onPrepareDialog(id, dialog);
 		AlertDialog alertDialog = (AlertDialog)dialog;
 		alertDialog.setMessage(ticketDetails);
-		int v=4;
 		return;
 	}
 

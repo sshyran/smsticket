@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_buy_ticket">Buy MHD ticket for Bratislava now.</string>
+    <string name="text_buy_ticket">All tickets history.</string>
     <string name="app_name">SMSTicket</string>
 	<string name="text_button_buy_ticket">Buy!</string>
 	<string name="intent_sms_sent">sk.michalko.smsticket.SMS_SENT</string>
 	<string name="intent_sms_delivered">sk.michalko.smsticket.SMS_DELIVERED</string>
 	<string name="intent_sms_received">android.provider.Telephony.SMS_RECEIVED</string>
+	<string name="intent_sms_sent_toast">Ticket order sent.</string>
+	<string name="intent_sms_delivered_toast">Ticket order delivered.</string>
+	<string name="intent_sms_received_toast">SMS received, searching for ticket.</string>
 	<string name="intent_update">sk.michalko.smsticket.update</string>
 	<string name="dialog_ticket_details_title">Ticket details information</string>
 	<string name="dialog_ticket_details_ok">Ok!</string>	
