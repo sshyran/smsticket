@@ -94,8 +94,8 @@ public class SMSReceiver extends BroadcastReceiver {
 					ticket.setChanged(new Date());
 					ticket.setSmsBody(messages[0].getMessageBody());
 					try{
-						String dateFrom = messages[0].getMessageBody().substring(68, 84);
-						String dateThrough = dateFrom.substring(0,11) + messages[0].getMessageBody().substring(88, 93);
+						String dateFrom = messages[0].getMessageBody().substring(70, 86);
+						String dateThrough = dateFrom.substring(0,11) + messages[0].getMessageBody().substring(90, 95);
 						ticket.setValidFrom(dateFormat.parse(dateFrom));
 						ticket.setValidThrough(dateFormat.parse(dateThrough));
 					} catch (Exception e) 
