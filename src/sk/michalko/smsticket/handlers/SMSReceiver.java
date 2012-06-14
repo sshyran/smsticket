@@ -26,8 +26,6 @@ public class SMSReceiver extends BroadcastReceiver {
 
 	static final String TAG = SMSReceiver.class.getSimpleName();
 
-	SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
 	Context ctx = null;
 
 	@Override
@@ -93,15 +91,7 @@ public class SMSReceiver extends BroadcastReceiver {
 					ticket.setState(TicketState.TICKET_VALID.toString());
 					ticket.setChanged(new Date());
 					ticket.setSmsBody(messages[0].getMessageBody());
-					try{
-						String dateFrom = messages[0].getMessageBody().substring(70, 86);
-						String dateThrough = dateFrom.substring(0,11) + messages[0].getMessageBody().substring(90, 95);
-						ticket.setValidFrom(dateFormat.parse(dateFrom));
-						ticket.setValidThrough(dateFormat.parse(dateThrough));
-					} catch (Exception e) 
-					{
-						Log.e(TAG, "Message cannot be parsed for ticket." + e);
-					}
+					ticket.expandBody();
 					Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_received_toast), Toast.LENGTH_LONG).show();
 					changeState(TicketState.TICKET_ORDER_CONFIRMED, TicketState.TICKET_VALID, ticket);
 					StringBuffer message = new StringBuffer();

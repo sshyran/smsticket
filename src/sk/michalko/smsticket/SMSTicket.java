@@ -127,9 +127,26 @@ public class SMSTicket extends ListActivity {
 			// TicketDao ticket = TicketDao.getCurrent(v.getContext());
 
 			// if (ticket == null || ticket.getState() == TicketState.TICKET_EXPIRED.toString()){
-			sendSMS();
-			Toast.makeText(getBaseContext(), "Sending ticket request.",	Toast.LENGTH_SHORT).show();
-			// }
+			
+			// Confirm action by user
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(SMSTicket.this);
+			builder.setMessage("Send SMS?")
+			       .setCancelable(false)
+			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+							sendSMS();
+							Toast.makeText(getBaseContext(), "Sending ticket request.",	Toast.LENGTH_SHORT).show();
+			           }
+			       })
+			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                dialog.cancel();
+			           }
+			       });
+			builder.show();
+					
+			
 		}
 	};
 

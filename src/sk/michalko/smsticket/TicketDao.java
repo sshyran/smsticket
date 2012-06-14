@@ -15,7 +15,8 @@ public class TicketDao {
 	
 	static final String TAG = TicketDao.class.getSimpleName();
 
-	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+	static final SimpleDateFormat dateFormatDb = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+	static final SimpleDateFormat dateFormatSms = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
 	String _id;
 	String uuid;
@@ -265,7 +266,7 @@ public class TicketDao {
 		
 		if (date == null) return null;
 		
-		return dateFormat.format(date);
+		return dateFormatDb.format(date);
 		
 	}
 	
@@ -275,7 +276,7 @@ public class TicketDao {
 				
 		Date temp ;
 		try {
-			temp = dateFormat.parse(date, new ParsePosition(0));
+			temp = dateFormatDb.parse(date, new ParsePosition(0));
 			return temp;
 		} catch (NullPointerException npe) {
 			// unreachable (date!=null and ParsePosition!=null)
@@ -283,6 +284,23 @@ public class TicketDao {
 		
 		return null;
 		
+	}
+
+	/**
+	 *  Parse ticket SMS message text and store extracted info in DAO fileds. 
+	 */
+	public void expandBody() {
+		try{
+			String dateFrom = getSmsBody().substring(70, 86);
+			String dateThrough = dateFrom.substring(0,11) + getSmsBody().substring(90, 95);
+			setValidFrom(dateFormatSms.parse(dateFrom));
+			setValidThrough(dateFormatSms.parse(dateThrough));
+		} catch (Exception e) 
+		{
+			//throw ()
+			Log.e(TAG, "Message cannot be parsed for ticket." + e);
+		}
+
 	}
 	
 	
