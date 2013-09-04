@@ -1,11 +1,16 @@
 package sk.michalko.smsticket.handlers;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import sk.michalko.smsticket.R;
 import sk.michalko.smsticket.TicketDao;
 import sk.michalko.smsticket.TicketState;
+import sk.michalko.smsticket.widget.SMSTicketWidget;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +31,11 @@ public class SMSReceiver extends BroadcastReceiver {
 
 	static final String TAG = SMSReceiver.class.getSimpleName();
 
+    static final String INTENT_SMS_SENT = "sk.michalko.smsticket.SMS_SENT";
+    static final String INTENT_SMS_DELIVERED = "sk.michalko.smsticket.SMS_DELIVERED";
+    static final String INTENT_SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
+    static final String INTENT_TICKET_EXPIRED = "sk.michalko.smsticket.TICKET_EXPIRED";
+
 	Context ctx = null;
 
 	@Override
@@ -33,9 +43,6 @@ public class SMSReceiver extends BroadcastReceiver {
 
 		ctx = context;
 
-		final String INTENT_SMS_SENT = ctx.getResources().getString(R.string.intent_sms_sent);
-		final String INTENT_SMS_DELIVERED = ctx.getResources().getString(R.string.intent_sms_delivered);
-		final String INTENT_SMS_RECEIVED = ctx.getResources().getString(R.string.intent_sms_received);
 
 
 		// what are we notified about ?
@@ -92,8 +99,19 @@ public class SMSReceiver extends BroadcastReceiver {
 					ticket.setChanged(new Date());
 					ticket.setSmsBody(messages[0].getMessageBody());
 					ticket.expandBody();
-					Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_received_toast), Toast.LENGTH_LONG).show();
+
+                    Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_received_toast), Toast.LENGTH_LONG).show();
 					changeState(TicketState.TICKET_ORDER_CONFIRMED, TicketState.TICKET_VALID, ticket);
+
+                    // Setup expire notification
+                    Intent updateIntent = new Intent(INTENT_TICKET_EXPIRED);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0, updateIntent, 0);
+                    AlarmManager alarmManager = (AlarmManager)ctx.getSystemService(ctx.ALARM_SERVICE);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(ticket.getValidThrough());
+                    alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+
+                    // Log message
 					StringBuffer message = new StringBuffer();
 					message.append("Found Ticket SMS: \n");
 					message.append(messages[0].getMessageBody());
@@ -106,7 +124,12 @@ public class SMSReceiver extends BroadcastReceiver {
 					ticket.update(ctx);
 				}
 			}
-		}
+		}else if (INTENT_TICKET_EXPIRED.equalsIgnoreCase(action)){
+            ticket = TicketDao.getByUUID(ticketId, ctx);
+            changeState(TicketState.TICKET_ORDER_IN_PROGRESS, TicketState.TICKET_ORDER_CONFIRMED, ticket);
+            ticket.update(ctx);
+            Toast.makeText(context, ctx.getResources().getString(R.string.intent_ticket_expired_toast), Toast.LENGTH_LONG).show();
+        }
 	}
 
 	public void changeState(TicketState currentState, TicketState nextState, TicketDao ticket) {

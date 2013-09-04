@@ -10,13 +10,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="sk.michalko.smsticket.handlers.SMSReceiver"> 
+        <receiver android:name=".handlers.SMSReceiver">
             <intent-filter> 
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="android.provider.Telephony.SMS_RECEIVED_ACTION" />
                 <action android:name="sk.michalko.smsticket.SMS_SENT"/> 
                 <action android:name="sk.michalko.smsticket.SMS_DELIVERED"/> 
             </intent-filter> 
+        </receiver>
+        <receiver android:name=".widget.SMSTicketWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="sk.michalko.smsticket.TICKET_EXPIRED"/>
+                <action android:name="sk.michalko.smsticket.TICKET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/widget_info" />
         </receiver>
     </application>
     <uses-sdk android:minSdkVersion="7"/>

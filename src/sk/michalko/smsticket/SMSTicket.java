@@ -185,6 +185,7 @@ public class SMSTicket extends ListActivity {
 		// Check and remove unfinished (state < TICKET_VALID and created < now()- 10 min)
 		// optionaly check received sms messages in case notification failed
 		//db.execSQL("DELETE from tickets WHERE (state != 'TICKET_VALID' AND state != 'TICKET_EXPIRED') AND (created < datetime('now','localtime', '-10 minutes'))");
+        // Remove failed requests
 		db.execSQL("DELETE from tickets WHERE (validThrough is null) AND (created < datetime('now','localtime', '-10 minutes'))");
 		// Check and update expired (state < TICKET_EXPIRED and validThrough < now())
 		db.execSQL("UPDATE tickets SET state = 'TICKET_EXPIRED' WHERE (state = 'TICKET_VALID' AND validThrough < datetime('now'))");
