@@ -7,6 +7,7 @@ import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -49,6 +50,7 @@ public class SMSTicket extends ListActivity {
 		cursorView = db.query("tickets", new String[] { "_id", "changed", "state",	"validThrough" }, null, null, null, null, "created DESC", null);
 
 		adapter = new SimpleCursorAdapter(this,	R.layout.item, cursorView, PROJECTION, new int[] { R.id.item_image,	R.id.item_text });
+        //adapter = new CursorLoader(this,);
 		adapter.setViewBinder(new IconViewBinder());
 		setListAdapter(adapter);
 		
@@ -173,6 +175,7 @@ public class SMSTicket extends ListActivity {
 
 		SmsManager smsManager = SmsManager.getDefault();
 		//smsManager.sendTextMessage("5554", null, "DPB .a.s. \nPrestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk \nPlatnost od 01-02-2011 12:40 do 01:50 hod. \ngwoea4qg3wt", intentSMSSent, intentSMSDelivered);
+        //smsManager.sendTextMessage("5554", null, "DPB, .a.s. Prestupny CL 1,00EUR Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
 		smsManager.sendTextMessage("1100", null, " ", intentSMSSent, intentSMSDelivered);
 		//smsManager.sendTextMessage("00421905547580", null, "DPB .a.s. Prestupny CL 0,80EUR (24.10Sk) 1EUR=30.1260Sk Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
 

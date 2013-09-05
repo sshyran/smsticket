@@ -14,6 +14,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -137,8 +138,11 @@ public class SMSReceiver extends BroadcastReceiver {
 		// if (TicketState.valueOf(ticket.getState()) == currentState) {
 		ticket.setState(nextState.toString());
 
+        Uri uriTicketId = Uri.parse(ticket.getUuid());
+
 		Intent intentUpdate = new Intent();
 		intentUpdate.setAction(ctx.getResources().getString(R.string.intent_update));
+        intentUpdate.setData(uriTicketId);
 		ctx.sendBroadcast(intentUpdate);
 		// } else Log.e(TAG,"Ticket in unexpected state " + ticket.getState() +
 		// ", expected " + currentState);

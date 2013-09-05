@@ -291,8 +291,8 @@ public class TicketDao {
 	 */
 	public void expandBody() {
 		try{
-			String dateFrom = getSmsBody().substring(70, 86);
-			String dateThrough = dateFrom.substring(0,11) + getSmsBody().substring(90, 95);
+			String dateFrom = getSmsBody().substring(46,62);    //substring(70, 86);
+			String dateThrough = dateFrom.substring(0,11) + getSmsBody().substring(66,71); //substring(90, 95);
 			setValidFrom(dateFormatSms.parse(dateFrom));
 			setValidThrough(dateFormatSms.parse(dateThrough));
 		} catch (Exception e) 
@@ -300,7 +300,6 @@ public class TicketDao {
 			//throw ()
 			Log.e(TAG, "Message cannot be parsed for ticket." + e);
 		}
-
 	}
 	
 	
