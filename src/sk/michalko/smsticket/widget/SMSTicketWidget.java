@@ -36,10 +36,20 @@ public class SMSTicketWidget extends AppWidgetProvider{
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
         TicketDao ticket = TicketDao.getCurrent(context);
+
+        RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+
+
+        if (ticket == null) {
+            // Default visual
+            updateViews.setTextViewText(R.id.widget_text, "You have no tickets");
+            updateViews.setImageViewResource(R.id.widget_image,R.drawable.icon);
+            return;
+        }
+
         String stateString = ticket.getState();
         TicketState state = TicketState.valueOf(stateString);
 
-        RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
         updateViews.setTextViewText(R.id.widget_text, stateString);
 
