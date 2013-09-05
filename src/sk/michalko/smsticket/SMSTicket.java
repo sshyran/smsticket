@@ -57,7 +57,7 @@ public class SMSTicket extends ListActivity {
 		sanitizeDb();
 		
 		// Register refresh gui event receiver
-		registerReceiver(refresh, new IntentFilter(getResources().getString(R.string.intent_update)));
+		registerReceiver(refresh, new IntentFilter(getResources().getString(R.string.intent_ticket_update)));
 
 		Button btnBuyTicket = (Button) findViewById(R.id.button_buy);
 		btnBuyTicket.setOnClickListener(buttonListener);

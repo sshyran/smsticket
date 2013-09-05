@@ -127,7 +127,7 @@ public class SMSReceiver extends BroadcastReceiver {
 			}
 		}else if (INTENT_TICKET_EXPIRED.equalsIgnoreCase(action)){
             ticket = TicketDao.getByUUID(ticketId, ctx);
-            changeState(TicketState.TICKET_ORDER_IN_PROGRESS, TicketState.TICKET_ORDER_CONFIRMED, ticket);
+            changeState(TicketState.TICKET_VALID, TicketState.TICKET_EXPIRED, ticket);
             ticket.update(ctx);
             Toast.makeText(context, ctx.getResources().getString(R.string.intent_ticket_expired_toast), Toast.LENGTH_LONG).show();
         }
@@ -141,7 +141,7 @@ public class SMSReceiver extends BroadcastReceiver {
         Uri uriTicketId = Uri.parse(ticket.getUuid());
 
 		Intent intentUpdate = new Intent();
-		intentUpdate.setAction(ctx.getResources().getString(R.string.intent_update));
+		intentUpdate.setAction(ctx.getResources().getString(R.string.intent_ticket_update));
         intentUpdate.setData(uriTicketId);
 		ctx.sendBroadcast(intentUpdate);
 		// } else Log.e(TAG,"Ticket in unexpected state " + ticket.getState() +

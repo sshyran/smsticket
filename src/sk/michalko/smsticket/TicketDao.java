@@ -4,6 +4,8 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,6 +19,7 @@ public class TicketDao {
 
 	static final SimpleDateFormat dateFormatDb = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 	static final SimpleDateFormat dateFormatSms = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+	static final Pattern messagePattern = Pattern.compile(".*Platnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod. ([[0-9][a-z]]{11})");
 
 	String _id;
 	String uuid;
@@ -291,10 +294,23 @@ public class TicketDao {
 	 */
 	public void expandBody() {
 		try{
-			String dateFrom = getSmsBody().substring(46,62);    //substring(70, 86);
-			String dateThrough = dateFrom.substring(0,11) + getSmsBody().substring(66,71); //substring(90, 95);
-			setValidFrom(dateFormatSms.parse(dateFrom));
-			setValidThrough(dateFormatSms.parse(dateThrough));
+			//Pattern messagePattern = Pattern.compile(".*Platnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod. ([[0-9][a-z]]{11})");
+			Matcher matcher = messagePattern.matcher(getSmsBody());
+			String dateFrom = "";
+			String dateThrough = "";
+			
+			
+			if (matcher.find()) {
+				dateFrom = matcher.group(1) + " " + matcher.group(2);
+				dateThrough = matcher.group(1) + " " + matcher.group(3);
+				setValidFrom(dateFormatSms.parse(dateFrom));
+				setValidThrough(dateFormatSms.parse(dateThrough));
+				setTicketId(matcher.group(4));				
+			}
+			//String dateFrom = getSmsBody().substring(46,62);    //substring(70, 86);
+			//String dateThrough = dateFrom.substring(0,11) + getSmsBody().substring(66,71); //substring(90, 95);
+			
+			
 		} catch (Exception e) 
 		{
 			//throw ()

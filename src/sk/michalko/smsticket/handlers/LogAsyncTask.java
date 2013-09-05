@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class LogAsyncTask extends AsyncTask<String , Void, Void> {
 
-	static final String TAG = LogAsyncTask.class.getSimpleName();
+	static final String TAG = "SMSTicket";
 
 	protected Void doInBackground(String... message) {
         Log.d(TAG,message[0]);

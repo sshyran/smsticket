@@ -7,7 +7,7 @@
 	<string name="intent_sms_delivered">sk.michalko.smsticket.SMS_DELIVERED</string>
 	<string name="intent_sms_received">android.provider.Telephony.SMS_RECEIVED</string>
     <string name="intent_ticket_expired">sk.michalko.smsticket.TICKET_EXPIRED</string>
-    <string name="intent_update">sk.michalko.smsticket.update</string>
+    <string name="intent_ticket_update">sk.michalko.smsticket.TICKET_UPDATE</string>
 	<string name="intent_sms_sent_toast">Ticket order sent.</string>
 	<string name="intent_sms_delivered_toast">Ticket order delivered.</string>
 	<string name="intent_sms_received_toast">SMS received, searching for ticket.</string>
