@@ -103,9 +103,12 @@ public class SMSReceiver extends BroadcastReceiver {
 
                     Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_received_toast), Toast.LENGTH_LONG).show();
 					changeState(TicketState.TICKET_ORDER_CONFIRMED, TicketState.TICKET_VALID, ticket);
+                    ticket.update(ctx);
 
                     // Setup expire notification
                     Intent updateIntent = new Intent(INTENT_TICKET_EXPIRED);
+                    Uri uriTicketId = Uri.parse(ticket.getUuid());
+                    updateIntent.setData(uriTicketId);
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0, updateIntent, 0);
                     AlarmManager alarmManager = (AlarmManager)ctx.getSystemService(ctx.ALARM_SERVICE);
                     Calendar calendar = Calendar.getInstance();
@@ -122,7 +125,7 @@ public class SMSReceiver extends BroadcastReceiver {
 					message.append(messages[0].getPseudoSubject());
 					
 					new LogAsyncTask().execute(message.toString());
-					ticket.update(ctx);
+
 				}
 			}
 		}else if (INTENT_TICKET_EXPIRED.equalsIgnoreCase(action)){
@@ -130,6 +133,13 @@ public class SMSReceiver extends BroadcastReceiver {
             changeState(TicketState.TICKET_VALID, TicketState.TICKET_EXPIRED, ticket);
             ticket.update(ctx);
             Toast.makeText(context, ctx.getResources().getString(R.string.intent_ticket_expired_toast), Toast.LENGTH_LONG).show();
+
+            // Log message
+            StringBuffer message = new StringBuffer();
+            message.append("sk.michalko.smsticket: SMS Ticket expired: \n");
+
+            new LogAsyncTask().execute(message.toString());
+
         }
 	}
 
