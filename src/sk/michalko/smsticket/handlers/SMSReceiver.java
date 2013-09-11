@@ -48,9 +48,9 @@ public class SMSReceiver extends BroadcastReceiver {
 
 		// what are we notified about ?
 		String action = intent.getAction();
-		String ticketId = intent.getDataString();
+		String ticketUuid = intent.getDataString();
 
-		Log.d(TAG, "Received notification " + action + ", " + ticketId);
+		Log.d(TAG, "Received notification " + action + ", " + ticketUuid);
 
 //		Toast.makeText(context, action, Toast.LENGTH_LONG).show();
 
@@ -58,14 +58,14 @@ public class SMSReceiver extends BroadcastReceiver {
 
 		if (INTENT_SMS_SENT.equalsIgnoreCase(action)) {
 
-			ticket = TicketDao.getByUUID(ticketId, ctx);
+			ticket = TicketDao.getByUUID(ticketUuid, ctx);
 			changeState(TicketState.TICKET_ORDER_CREATED, TicketState.TICKET_ORDER_IN_PROGRESS, ticket);
 			ticket.update(ctx);
 			Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_sent_toast), Toast.LENGTH_LONG).show();
 
 		} else if (INTENT_SMS_DELIVERED.equalsIgnoreCase(action)) {
 
-			ticket = TicketDao.getByUUID(ticketId, ctx);
+			ticket = TicketDao.getByUUID(ticketUuid, ctx);
 			changeState(TicketState.TICKET_ORDER_IN_PROGRESS, TicketState.TICKET_ORDER_CONFIRMED, ticket);
 			ticket.update(ctx);
 			Toast.makeText(context, ctx.getResources().getString(R.string.intent_sms_delivered_toast), Toast.LENGTH_LONG).show();
@@ -96,8 +96,8 @@ public class SMSReceiver extends BroadcastReceiver {
 				if (j == 1) {
 					// Get last created ticket, but not validated
 					ticket = TicketDao.getCurrent(ctx);
-					ticket.setState(TicketState.TICKET_VALID.toString());
-					ticket.setChanged(new Date());
+					//ticket.setState(TicketState.TICKET_VALID.toString());
+					//ticket.setChanged(new Date());
 					ticket.setSmsBody(messages[0].getMessageBody());
 					ticket.expandBody();
 
@@ -119,43 +119,48 @@ public class SMSReceiver extends BroadcastReceiver {
 					StringBuffer message = new StringBuffer();
 					message.append("Found Ticket SMS: \n");
 					message.append(messages[0].getMessageBody());
-					message.append("\nClass:\n");
-					message.append(messages[0].getMessageClass());
-					message.append("\nSubject: ");
-					message.append(messages[0].getPseudoSubject());
+					//message.append("\nClass:\n");
+					//message.append(messages[0].getMessageClass());
+					//message.append("\nSubject: ");
+					//message.append(messages[0].getPseudoSubject());
 					
 					new LogAsyncTask().execute(message.toString());
 
 				}
 			}
 		}else if (INTENT_TICKET_EXPIRED.equalsIgnoreCase(action)){
-            ticket = TicketDao.getByUUID(ticketId, ctx);
+            ticket = TicketDao.getByUUID(ticketUuid, ctx);
             changeState(TicketState.TICKET_VALID, TicketState.TICKET_EXPIRED, ticket);
             ticket.update(ctx);
             Toast.makeText(context, ctx.getResources().getString(R.string.intent_ticket_expired_toast), Toast.LENGTH_LONG).show();
 
             // Log message
             StringBuffer message = new StringBuffer();
-            message.append("sk.michalko.smsticket: SMS Ticket expired: \n");
+            message.append("sk.michalko.smsticket: SMS Ticket expired: ");
+            message.append(ticketUuid);
+            
 
             new LogAsyncTask().execute(message.toString());
 
         }
 	}
 
-	public void changeState(TicketState currentState, TicketState nextState, TicketDao ticket) {
+	public void changeState(TicketState currentState, TicketState targetState, TicketDao ticket) {
 
-		// if (TicketState.valueOf(ticket.getState()) == currentState) {
-		ticket.setState(nextState.toString());
+		if (TicketState.valueOf(ticket.getState()).compareTo(targetState) != -1) {
+			Log.e(TAG,"Ticket already " + ticket.getState() + " notification " + targetState + " is too late.");			
+			return;
+		} 
+		
+		ticket.setState(targetState.toString());
 
-        Uri uriTicketId = Uri.parse(ticket.getUuid());
+        Uri uriTicketUuid = Uri.parse(ticket.getUuid());
 
 		Intent intentUpdate = new Intent();
 		intentUpdate.setAction(ctx.getResources().getString(R.string.intent_ticket_update));
-        intentUpdate.setData(uriTicketId);
+        intentUpdate.setData(uriTicketUuid);
 		ctx.sendBroadcast(intentUpdate);
-		// } else Log.e(TAG,"Ticket in unexpected state " + ticket.getState() +
-		// ", expected " + currentState);
+
 	}
 
 }

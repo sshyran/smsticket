@@ -309,7 +309,7 @@ public class TicketDao {
 			}
 			//String dateFrom = getSmsBody().substring(46,62);    //substring(70, 86);
 			//String dateThrough = dateFrom.substring(0,11) + getSmsBody().substring(66,71); //substring(90, 95);
-			
+			Log.d(TAG, "Message parsed, valid from " + getValidFrom() + " to " + getValidThrough() );
 			
 		} catch (Exception e) 
 		{
