@@ -19,7 +19,7 @@ public class TicketDao {
 
 	static final SimpleDateFormat dateFormatDb = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 	static final SimpleDateFormat dateFormatSms = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-	static final Pattern messagePattern = Pattern.compile(".*Platnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod. ([[0-9][a-z]]{11})");
+	static final Pattern messagePattern = Pattern.compile(".*Platnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod.*([[0-9][a-z]]{11})");
 
 	String _id;
 	String uuid;
