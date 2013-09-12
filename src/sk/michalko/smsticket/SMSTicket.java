@@ -180,10 +180,10 @@ public class SMSTicket extends ListActivity {
 		PendingIntent intentSMSDelivered = PendingIntent.getBroadcast(context, 0, intentDelivered, 0);
 
 		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage("5554", null, getDebugSms() , intentSMSSent, intentSMSDelivered);
+		//smsManager.sendTextMessage("5554", null, getDebugSms() , intentSMSSent, intentSMSDelivered);
         //smsManager.sendTextMessage("5554", null, "DPB, .a.s. Prestupny CL 1,00EUR Platnost od 01-02-2011 12:40 do 01:50 hod. gwoea4qg3wt", intentSMSSent, intentSMSDelivered);
         //smsManager.sendTextMessage("00421905547580", null, getDebugSms(), intentSMSSent, intentSMSDelivered);
-		//smsManager.sendTextMessage("1100", null, " ", intentSMSSent, intentSMSDelivered);
+		smsManager.sendTextMessage("1100", null, " ", intentSMSSent, intentSMSDelivered);
 
 		Log.d(TAG, "SMS Ticket message sent. " + ticket.getUuid());
 
@@ -194,7 +194,9 @@ public class SMSTicket extends ListActivity {
         calendarThrough.setTime(new Date());
         calendarThrough.add(Calendar.MINUTE,2);
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        String message = "DPB, a.s. Prestupny CL 1,00EUR Platnost od " + TicketDao.dateFormatSms.format(new Date()) + " do " + timeFormat.format(calendarThrough.getTime()) + " hod. gwoea4qg3wt";
+        String message = "DPB, a.s.\n" +
+                "Prestupny CL 1,00EUR\n" +
+                "Platnost od " + TicketDao.dateFormatSms.format(new Date()) + " do " + timeFormat.format(calendarThrough.getTime()) + " hod. gwoea4qg3wt";
         return message;
     }
 

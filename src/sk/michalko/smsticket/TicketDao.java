@@ -17,9 +17,9 @@ public class TicketDao {
 	
 	static final String TAG = TicketDao.class.getSimpleName();
 
-	static final SimpleDateFormat dateFormatDb = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-	static final SimpleDateFormat dateFormatSms = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-	static final Pattern messagePattern = Pattern.compile(".*Platnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod.*([[0-9][a-z]]{11})");
+	public static final SimpleDateFormat dateFormatDb = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static final SimpleDateFormat dateFormatSms = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+	static final Pattern messagePattern = Pattern.compile(".*DPB, a.s.\nPrestupny CL 1,00EUR\nPlatnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod.\n([[0-9][a-z]]{11}).*");
 
 	String _id;
 	String uuid;
@@ -294,7 +294,7 @@ public class TicketDao {
 	 */
 	public void expandBody() {
 		try{
-			//Pattern messagePattern = Pattern.compile(".*Platnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod. ([[0-9][a-z]]{11})");
+			//(".*Platnost od ([0-9]{2}-[0-9]{2}-[0-9]{4}) ([0-9]{2}:[0-9]{2}) do ([0-9]{2}:[0-9]{2}) hod.*([[0-9][a-z]]{11})");
 			Matcher matcher = messagePattern.matcher(getSmsBody());
 			String dateFrom = "";
 			String dateThrough = "";
@@ -318,5 +318,14 @@ public class TicketDao {
 		}
 	}
 	
-	
+	public boolean parseSms(String Sms) {
+
+        return false;
+    }
+
+    public static boolean isTicketSms (String stringSms) {
+        boolean is = messagePattern.matcher(stringSms).matches();
+        return is;
+
+    }
 }

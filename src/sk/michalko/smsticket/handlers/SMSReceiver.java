@@ -85,10 +85,9 @@ public class SMSReceiver extends BroadcastReceiver {
 					messages[j] = SmsMessage.createFromPdu((byte[]) pdus[i]);
 					text = messages[j].getMessageBody();
 					// Detect SMS Ticket message
-					//if ("DPB".regionMatches(0, text, 0, 3)) {
-					if (text != null && text.contains("Prestupny CL")) {
+					if (text != null && TicketDao.isTicketSms(text)) {
 						j++;
-						//Log.d(TAG, "Found Ticket SMS: \n" + text + "\nClass:\n" + messages[j].getMessageClass() + "\nSubject: " +messages[j].getPseudoSubject());
+						Log.d(TAG, "Found Ticket SMS: \n" + text);
 					}
 				}
 
@@ -106,25 +105,24 @@ public class SMSReceiver extends BroadcastReceiver {
                     ticket.update(ctx);
 
                     // Setup expire notification
-                    Intent updateIntent = new Intent(INTENT_TICKET_EXPIRED);
+                    //Intent updateIntent = new Intent(INTENT_TICKET_EXPIRED);
                     Uri uriTicketId = Uri.parse(ticket.getUuid());
-                    updateIntent.setData(uriTicketId);
+                    Intent updateIntent = new Intent(INTENT_TICKET_EXPIRED, uriTicketId, ctx, SMSReceiver.class);
+                    //updateIntent.setData(uriTicketId);
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0, updateIntent, 0);
-                    AlarmManager alarmManager = (AlarmManager)ctx.getSystemService(ctx.ALARM_SERVICE);
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(ticket.getValidThrough());
-                    alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+                    Log.d(TAG,TicketDao.dateFormatSms.format(calendar.getTime()));
+
+                    AlarmManager alarmManager = (AlarmManager)ctx.getSystemService(ctx.ALARM_SERVICE);
+                    alarmManager.set(AlarmManager.RTC,calendar.getTimeInMillis(),pendingIntent);
 
                     // Log message
-					StringBuffer message = new StringBuffer();
-					message.append("Found Ticket SMS: \n");
-					message.append(messages[0].getMessageBody());
-					//message.append("\nClass:\n");
-					//message.append(messages[0].getMessageClass());
-					//message.append("\nSubject: ");
-					//message.append(messages[0].getPseudoSubject());
-					
-					new LogAsyncTask().execute(message.toString());
+					//StringBuffer message = new StringBuffer();
+					//message.append("Found Ticket SMS: \n");
+					//message.append(messages[0].getMessageBody());
+
+					//new LogAsyncTask().execute(message.toString());
 
 				}
 			}
@@ -147,7 +145,7 @@ public class SMSReceiver extends BroadcastReceiver {
 
 	public void changeState(TicketState currentState, TicketState targetState, TicketDao ticket) {
 
-		if (TicketState.valueOf(ticket.getState()).compareTo(targetState) != -1) {
+		if (TicketState.valueOf(ticket.getState()).compareTo(targetState) >= 0) {
 			Log.e(TAG,"Ticket already " + ticket.getState() + " notification " + targetState + " is too late.");			
 			return;
 		} 
@@ -156,9 +154,8 @@ public class SMSReceiver extends BroadcastReceiver {
 
         Uri uriTicketUuid = Uri.parse(ticket.getUuid());
 
-		Intent intentUpdate = new Intent();
-		intentUpdate.setAction(ctx.getResources().getString(R.string.intent_ticket_update));
-        intentUpdate.setData(uriTicketUuid);
+		Intent intentUpdate = new Intent(ctx.getResources().getString(R.string.intent_ticket_update),uriTicketUuid);
+
 		ctx.sendBroadcast(intentUpdate);
 
 	}
